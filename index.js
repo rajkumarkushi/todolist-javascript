@@ -1,38 +1,55 @@
-const input=document.getElementById('input-box')
-const lists=document.getElementById('list-container');
+const lists = document.getElementById('list-container');
+const input = document.getElementById('input-box');
+const searchBox = document.getElementById('search-box');
 
-
-function addtask() {
-    if (input.value == '') {
-        alert('please write something');
+function addTask() {
+    if (input.value === '') {
+        alert('Please write something');
     } else {
         let li = document.createElement('li');
         li.innerHTML = input.value;
-        lists.appendChild(li);  // Corrected variable name to "lists" from "list"
-        console.log(lists);    
-        let span=document.createElement("span");
-        span.innerHTML="\u00d7";
-        li.appendChild(span)
+        lists.appendChild(li);
+        console.log(lists);
+        
+        let span = document.createElement('span');
+        span.classList.add('close');
+        li.appendChild(span);
+        
+        input.value = ''; // Clear input field after adding task
     }
-    savedata()
+    saveData();
 }
 
-lists.addEventListener('click',function(e){
-if(e.target.tagName==='LI'){
-    // e.target.classList.toggle('checked')
-    savedata()
-}else if(e.target.tagName==="SPAN"){
-e.target.parentElement.remove();
-savedata()
-}
-},false)
+lists.addEventListener('click', function(e) {
+    if (e.target.tagName === 'LI') {
+        e.target.classList.toggle('checked');
+        saveData();
+    } else if (e.target.tagName === 'SPAN') {
+        e.target.parentElement.remove();
+        saveData();
+    }
+}, false);
 
-function savedata(){
-    localStorage.setItem('data',lists.innerHTML)
-}
-
-function showtask(){
-    lists.innerHTML=localStorage.getItem("data")
+function saveData() {
+    localStorage.setItem('data', lists.innerHTML);
 }
 
-showtask()
+function showTask() {
+    lists.innerHTML = localStorage.getItem('data') || '';
+}
+
+function searchTasks() {
+    const filter = searchBox.value.toLowerCase();
+    const li = lists.getElementsByTagName('li');
+    
+    for (let i = 0; i < li.length; i++) {
+        const task = li[i].textContent || li[i].innerText;
+        if (task.toLowerCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+        }
+    }
+}
+
+showTask();
